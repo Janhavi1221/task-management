@@ -48,32 +48,19 @@ export default function StudentsPage() {
 
                 {/* Progress bar */}
                 <div className="mb-3">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                  <div className="flex justify-between text-xs text-muted-foreground mb-1">
                     <span>Progress</span>
                     <span>{progress}%</span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div 
-                      className="bg-primary h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${progress}%` }}
-                    />
+                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${progress}%` }} />
                   </div>
                 </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="bg-muted rounded-lg p-2">
-                    <p className="text-lg font-semibold text-card-foreground">{stats.total}</p>
-                    <p className="text-xs text-muted-foreground">Total</p>
-                  </div>
-                  <div className="bg-muted rounded-lg p-2">
-                    <p className="text-lg font-semibold text-success">{stats.completed}</p>
-                    <p className="text-xs text-muted-foreground">Done</p>
-                  </div>
-                  <div className="bg-muted rounded-lg p-2">
-                    <p className="text-lg font-semibold text-warning">{stats.pending}</p>
-                    <p className="text-xs text-muted-foreground">Pending</p>
-                  </div>
+                <div className="flex gap-3 text-xs">
+                  <span className="status-completed px-2 py-0.5 rounded-full">{stats.completed} Done</span>
+                  <span className="status-in-progress px-2 py-0.5 rounded-full">{stats.inProgress} Active</span>
+                  <span className="status-pending px-2 py-0.5 rounded-full">{stats.pending} Pending</span>
                 </div>
               </button>
             );

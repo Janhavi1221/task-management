@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { useNavigate, Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Login() {
   const { login } = useApp();
@@ -16,87 +17,60 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-green-900 dark:to-green-800 p-4">
-      <div className="w-full max-w-md slide-up">
-        {/* Logo Section */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 rounded-2xl mb-4 shadow-lg">
-            <span className="text-2xl font-bold text-white">📋</span>
+    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      <div className="w-full max-w-md">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">📋 TaskFlow</h1>
+            <p className="text-muted-foreground mt-2">Smart Task Management System</p>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">TaskFlow</h1>
-          <p className="text-gray-600 dark:text-gray-400">Smart Task Management System</p>
+          <ThemeToggle />
         </div>
-        
-        {/* Login Card */}
-        <div className="card p-8">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome back</h2>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">Enter your credentials to access your workspace</p>
-          </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 border border-border" style={{ boxShadow: "var(--shadow-elevated)" }}>
+          <h2 className="text-xl font-semibold text-card-foreground mb-6">Welcome back</h2>
+          <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Full Name
-              </label>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
-                placeholder="Enter your full name"
-                className="input"
+                placeholder="Enter your name"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
                 required
               />
             </div>
-
             <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Select Role
-              </label>
-              <div className="grid grid-cols-2 gap-3">
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Role</label>
+              <div className="flex gap-3">
                 {["student", "teacher"].map(r => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRole(r)}
-                    className={`relative py-3 px-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all capitalize ${
                       role === r
-                        ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg transform scale-105"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-secondary"
                     }`}
                   >
-                    <span className="flex items-center justify-center gap-2">
-                      {r === "teacher" ? "👩‍🏫 Teacher" : "👨‍🎓 Student"}
-                    </span>
+                    {r === "teacher" ? "👩‍🏫 Teacher" : "👨‍🎓 Student"}
                   </button>
                 ))}
               </div>
             </div>
-
             <button
               type="submit"
-              className="btn-primary w-full py-3 text-base"
+              className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2"
             >
-              Sign In to Workspace
+              Log In
             </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 font-semibold transition-colors">
-                Create account
-              </Link>
-            </p>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-500">
-            By signing in, you agree to our Terms of Service and Privacy Policy
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-primary font-medium hover:underline">Sign up</Link>
           </p>
-        </div>
+        </form>
       </div>
     </div>
   );

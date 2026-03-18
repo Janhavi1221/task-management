@@ -41,16 +41,12 @@ export default function StudentDetail() {
                   task.status === "In Progress" ? "status-in-progress" : "status-pending"
                 }`}>{task.status}</span>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1">
-                  <FiClock size={12} />
-                  Due: {task.dueDate}
-                </span>
-                <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                  task.priority === "High" ? "priority-high" :
-                  task.priority === "Medium" ? "priority-medium" : "priority-low"
-                }`}>{task.priority}</span>
+              <p className="text-sm text-muted-foreground mb-3">{task.description}</p>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span className={`px-2 py-0.5 rounded-full ${
+                  task.priority === "High" ? "priority-high" : task.priority === "Medium" ? "priority-medium" : "priority-low"
+                }`}>{task.priority} Priority</span>
+                <span className="flex items-center gap-1"><FiClock size={12} /> Updated {new Date(task.updatedAt).toLocaleDateString()}</span>
               </div>
             </div>
           ))}

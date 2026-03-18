@@ -48,14 +48,12 @@ export default function TeacherDashboard() {
                     task.status === "Completed" ? "status-completed" :
                     task.status === "In Progress" ? "status-in-progress" : "status-pending"
                   }`}>{task.status}</span>
-                  <div>
-                    <p className="text-sm font-medium text-card-foreground">{task.title}</p>
-                    <p className="text-xs text-muted-foreground">Due: {task.dueDate}</p>
-                  </div>
+                  <span className="text-sm text-card-foreground">{task.title}</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs text-muted-foreground">{task.assignedTo.length} students</p>
-                </div>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  task.priority === "High" ? "priority-high" :
+                  task.priority === "Medium" ? "priority-medium" : "priority-low"
+                }`}>{task.priority}</span>
               </div>
             ))}
           </div>

@@ -29,105 +29,58 @@ export default function CreateTask() {
     navigate("/manage-tasks");
   };
 
+  const inputClass = "w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground";
+
   return (
     <DashboardLayout>
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-2xl space-y-6">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Create New Task</h2>
-          <p className="text-muted-foreground text-sm mt-1">Assign a new task to students.</p>
+          <p className="text-muted-foreground text-sm mt-1">Assign a task to your students.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-card rounded-xl border border-border p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-card rounded-xl border border-border p-6 space-y-5" style={{ boxShadow: "var(--shadow-card)" }}>
           <div>
-            <label className="block text-sm font-medium text-card-foreground mb-2">Task Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={e => setTitle(e.target.value)}
-              placeholder="Enter task title"
-              className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-              required
-            />
+            <label className="block text-sm font-medium text-card-foreground mb-1.5">Title</label>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Task title" className={inputClass} required />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-card-foreground mb-2">Description</label>
-            <textarea
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              placeholder="Describe the task requirements"
-              rows={4}
-              className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground resize-none"
-            />
+            <label className="block text-sm font-medium text-card-foreground mb-1.5">Description</label>
+            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe the task..." rows={3} className={inputClass} />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-card-foreground mb-2">Assign To</label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {students.map(student => (
-                <label
-                  key={student.id}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-border cursor-pointer hover:bg-muted transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={assignedTo.includes(student.id)}
-                    onChange={() => toggleStudent(student.id)}
-                    className="w-4 h-4 text-primary border-border rounded focus:ring-2 focus:ring-ring"
-                  />
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                      {student.avatar}
-                    </div>
-                    <span className="text-sm text-foreground">{student.name}</span>
-                  </div>
-                </label>
+            <label className="block text-sm font-medium text-card-foreground mb-1.5">Assign to Students</label>
+            <div className="flex flex-wrap gap-2">
+              {students.map(s => (
+                <button key={s.id} type="button" onClick={() => toggleStudent(s.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all border ${
+                    assignedTo.includes(s.id)
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                  }`}>
+                  {assignedTo.includes(s.id) && <FiCheck size={14} />}
+                  {s.name}
+                </button>
               ))}
             </div>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Due Date</label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={e => setDueDate(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground outline-none focus:ring-2 focus:ring-ring"
-                required
-              />
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Due Date</label>
+              <input type="date" value={dueDate} onChange={e => setDueDate(e.target.value)} className={inputClass} required />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-2">Priority</label>
-              <select
-                value={priority}
-                onChange={e => setPriority(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground outline-none focus:ring-2 focus:ring-ring"
-              >
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Priority</label>
+              <select value={priority} onChange={e => setPriority(e.target.value)} className={inputClass}>
+                <option value="High">🔴 High</option>
+                <option value="Medium">🟡 Medium</option>
+                <option value="Low">🟢 Low</option>
               </select>
             </div>
           </div>
-
-          <div className="flex gap-3 pt-4">
-            <button
-              type="submit"
-              className="flex-1 py-2.5 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-            >
-              <FiCheck size={16} />
-              Create Task
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate("/manage-tasks")}
-              className="px-6 py-2.5 rounded-lg bg-muted text-muted-foreground hover:bg-accent transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
+          <button type="submit" className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity">
+            Create Task
+          </button>
         </form>
       </div>
     </DashboardLayout>

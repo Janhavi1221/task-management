@@ -1,37 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import { authAPI, usersAPI, tasksAPI } from "../lib/api";
 
-interface User {
-  id: string;
-  name: string;
-  role: 'teacher' | 'student';
-}
-
-interface AppContextType {
-  user: User | null;
-  login: (name: string, role: string) => Promise<void>;
-  logout: () => void;
-  students: any[];
-  tasks: any[];
-  loading: boolean;
-  addTask: (task: any) => Promise<void>;
-  updateTask: (id: string, updates: any) => Promise<void>;
-  deleteTask: (id: string) => Promise<void>;
-  updateTaskStatus: (taskId: string, status: string) => Promise<void>;
-  addComment: (taskId: string, text: string) => Promise<void>;
-  darkMode: boolean;
-  toggleDarkMode: () => void;
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  filterStatus: string;
-  setFilterStatus: (status: string) => void;
-  filterPriority: string;
-  setFilterPriority: (priority: string) => void;
-  fetchStudents: () => Promise<void>;
-  fetchTasks: () => Promise<void>;
-}
-
-const AppContext = createContext<AppContextType | null>(null);
+const AppContext = createContext(null);
 
 export const useApp = () => {
   const ctx = useContext(AppContext);
@@ -39,8 +9,8 @@ export const useApp = () => {
   return ctx;
 };
 
-export const AppProvider = ({ children }: { children: any }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AppProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [students, setStudents] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
@@ -77,7 +47,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     }
   }, []);
 
-  const login = useCallback(async (name: string, role: string) => {
+  const login = useCallback(async (name, role) => {
     try {
       setLoading(true);
       const response = await authAPI.login({ name, role });
@@ -105,7 +75,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     });
   }, []);
 
-  const addTask = useCallback(async (task: any) => {
+  const addTask = useCallback(async (task) => {
     try {
       const response = await tasksAPI.createTask(task);
       setTasks(prev => [...prev, response.data]);
@@ -115,7 +85,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     }
   }, []);
 
-  const updateTask = useCallback(async (id: string, updates: any) => {
+  const updateTask = useCallback(async (id, updates) => {
     try {
       const response = await tasksAPI.updateTask(id, updates);
       setTasks(prev => prev.map(t => t._id === id ? response.data : t));
@@ -125,7 +95,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     }
   }, []);
 
-  const deleteTask = useCallback(async (id: string) => {
+  const deleteTask = useCallback(async (id) => {
     try {
       await tasksAPI.deleteTask(id);
       setTasks(prev => prev.filter(t => t._id !== id));
@@ -135,7 +105,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     }
   }, []);
 
-  const updateTaskStatus = useCallback(async (taskId: string, status: string) => {
+  const updateTaskStatus = useCallback(async (taskId, status) => {
     try {
       await updateTask(taskId, { status });
     } catch (error) {
@@ -144,7 +114,7 @@ export const AppProvider = ({ children }: { children: any }) => {
     }
   }, [updateTask]);
 
-  const addComment = useCallback(async (taskId: string, text: string) => {
+  const addComment = useCallback(async (taskId, text) => {
     try {
       const response = await tasksAPI.addComment(taskId, { text });
       setTasks(prev => prev.map(t => t._id === taskId ? response.data : t));

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { useNavigate, Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Signup() {
   const { login } = useApp();
@@ -19,9 +20,12 @@ export default function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground">📋 TaskFlow</h1>
-          <p className="text-muted-foreground mt-2">Create your account</p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">📋 TaskFlow</h1>
+            <p className="text-muted-foreground mt-2">Create your account</p>
+          </div>
+          <ThemeToggle />
         </div>
         <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 border border-border" style={{ boxShadow: "var(--shadow-elevated)" }}>
           <h2 className="text-xl font-semibold text-card-foreground mb-6">Sign Up</h2>

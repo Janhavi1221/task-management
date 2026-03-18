@@ -24,78 +24,59 @@ export default function AppSidebar() {
   const links = user?.role === "teacher" ? teacherLinks : studentLinks;
 
   return (
-    <aside className="w-64 min-h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col shadow-sm">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-xl flex items-center justify-center shadow-md">
-            <span className="text-lg font-bold text-white">📋</span>
-          </div>
-          <div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-white">TaskFlow</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Smart Task Manager</p>
-          </div>
-        </div>
+    <aside className="w-64 min-h-screen flex flex-col bg-sidebar text-sidebar-foreground shrink-0">
+      <div className="p-5 border-b border-sidebar-border">
+        <h1 className="text-lg font-bold text-sidebar-primary-foreground tracking-tight">
+          📋 TaskFlow
+        </h1>
+        <p className="text-xs text-sidebar-foreground/60 mt-1">Smart Task Manager</p>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-4">
-        <div className="space-y-2">
-          {links.map(({ to, icon: Icon, label }) => {
-            const active = location.pathname === to || location.pathname.startsWith(to + "/");
-            return (
-              <NavLink
-                key={to}
-                to={to}
-                className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
-                  active
-                    ? "bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg transform scale-105"
-                    : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
-                }`}
-                activeClassName=""
-              >
-                <Icon size={18} className={active ? "text-white" : "text-gray-500 dark:text-gray-400"} />
-                <span>{label}</span>
-                {active && (
-                  <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse" />
-                )}
-              </NavLink>
-            );
-          })}
-        </div>
+      <nav className="flex-1 p-3 space-y-1">
+        {links.map(({ to, icon: Icon, label }) => {
+          const active = location.pathname === to || location.pathname.startsWith(to + "/");
+          return (
+            <NavLink
+              key={to}
+              to={to}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                active
+                  ? "bg-sidebar-accent text-sidebar-primary font-medium"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              }`}
+              activeClassName=""
+            >
+              <Icon size={18} />
+              <span>{label}</span>
+            </NavLink>
+          );
+        })}
       </nav>
 
-      {/* User Section */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-3">
-        {/* User Profile */}
-        <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
-          <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-md">
+      <div className="p-3 border-t border-sidebar-border space-y-2">
+        <div className="flex items-center gap-3 px-3 py-2">
+          <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-xs font-bold text-sidebar-primary-foreground">
             {user?.name?.charAt(0) || "?"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-gray-900 dark:text-white truncate">{user?.name}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{user?.role}</p>
+            <p className="text-sm font-medium text-sidebar-accent-foreground truncate">{user?.name}</p>
+            <p className="text-xs text-sidebar-foreground/60 capitalize">{user?.role}</p>
           </div>
         </div>
-        
-        {/* Action Buttons */}
-        <div className="space-y-2">
-          <button
-            onClick={toggleDarkMode}
-            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl transition-all duration-200 group"
-          >
-            {darkMode ? <FiSun size={18} className="text-gray-500 dark:text-gray-400" /> : <FiMoon size={18} className="text-gray-500 dark:text-gray-400" />}
-            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-          </button>
-          
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all duration-200 group"
-          >
-            <FiLogOut size={18} className="text-red-500 dark:text-red-400" />
-            <span>Logout</span>
-          </button>
-        </div>
+        <button
+          onClick={toggleDarkMode}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
+        >
+          {darkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
+          <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+        </button>
+        <button
+          onClick={logout}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-sidebar-accent/50 transition-colors"
+        >
+          <FiLogOut size={18} />
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );
