@@ -3,8 +3,9 @@ import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
   FiHome, FiUsers, FiPlusCircle, FiList, FiBarChart2,
-  FiCheckSquare, FiLogOut, FiMoon, FiSun,
+  FiCheckSquare, FiLogOut,
 } from "react-icons/fi";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const teacherLinks = [
   { to: "/dashboard", icon: FiHome, label: "Dashboard" },
@@ -19,7 +20,7 @@ const studentLinks = [
 ];
 
 export default function AppSidebar() {
-  const { user, logout, darkMode, toggleDarkMode } = useApp();
+  const { user, logout } = useApp();
   const location = useLocation();
   const links = user?.role === "teacher" ? teacherLinks : studentLinks;
 
@@ -62,14 +63,8 @@ export default function AppSidebar() {
             <p className="text-sm font-medium text-sidebar-accent-foreground truncate">{user?.name}</p>
             <p className="text-xs text-sidebar-foreground/60 capitalize">{user?.role}</p>
           </div>
+          <ThemeToggle />
         </div>
-        <button
-          onClick={toggleDarkMode}
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors"
-        >
-          {darkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
-          <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
-        </button>
         <button
           onClick={logout}
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-destructive hover:bg-sidebar-accent/50 transition-colors"
