@@ -37,28 +37,38 @@ export default function Signup() {
             </div>
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@school.edu"
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
                 className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Role</label>
               <div className="flex gap-3">
                 {["student", "teacher"].map(r => (
-                  <button key={r} type="button" onClick={() => setRole(r)}
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
                     className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all capitalize ${
-                      role === r ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-secondary"
-                    }`}>
+                      role === r
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-secondary"
+                    }`}
+                  >
                     {r === "teacher" ? "👩‍🏫 Teacher" : "👨‍🎓 Student"}
                   </button>
                 ))}
               </div>
             </div>
-            <button type="submit" className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2">
-              Create Account
+            <button
+              type="submit"
+              className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2"
+            >
+              Sign Up
             </button>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-4">
-            Already have an account? <Link to="/login" className="text-primary font-medium hover:underline">Log in</Link>
+            Already have an account?{" "}
+            <Link to="/login" className="text-primary font-medium hover:underline">Log in</Link>
           </p>
         </form>
       </div>
