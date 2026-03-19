@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 
 const commentSchema = new mongoose.Schema({
   id: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    default: () => new mongoose.Types.ObjectId()
   },
   userId: {
     type: String,

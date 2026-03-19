@@ -4,22 +4,36 @@ import { useNavigate, Link } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Signup() {
-  const { login } = useApp();
+  const { signup } = useApp();
   const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    login(name, role);
-    navigate(role === "teacher" ? "/dashboard" : "/my-tasks");
+
+    if (!name.trim() || !email.trim() || !password.trim()) return;
+
+    setError("");
+
+    try {
+      await signup(name, email, password, role);
+      setTimeout(() => navigate("/login"), 1500);
+    } catch (error) {
+      setError(error.message || "Signup failed. Please try again.");
+      console.error("Signup failed:", error);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md">
+        
+        {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">📋 TaskFlow</h1>
@@ -27,23 +41,71 @@ export default function Signup() {
           </div>
           <ThemeToggle />
         </div>
-        <form onSubmit={handleSubmit} className="bg-card rounded-2xl p-8 border border-border" style={{ boxShadow: "var(--shadow-elevated)" }}>
-          <h2 className="text-xl font-semibold text-card-foreground mb-6">Sign Up</h2>
+
+        {/* Form */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card rounded-2xl p-8 border border-border"
+          style={{ boxShadow: "var(--shadow-elevated)" }}
+        >
+          <h2 className="text-xl font-semibold text-card-foreground mb-6">
+            Sign Up
+          </h2>
+
           <div className="space-y-4">
+            
+            {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-1.5">Full Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Your full name"
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground" required />
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+                required
+              />
             </div>
+
+            {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-1.5">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
-                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground" required />
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+                required
+              />
             </div>
+
+            {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-1.5">Role</label>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+                required
+              />
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">
+                Role
+              </label>
               <div className="flex gap-3">
-                {["student", "teacher"].map(r => (
+                {["student", "teacher"].map((r) => (
                   <button
                     key={r}
                     type="button"
@@ -59,17 +121,32 @@ export default function Signup() {
                 ))}
               </div>
             </div>
+
+            {/* Submit Button */}
             <button
               type="submit"
               className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2"
             >
               Sign Up
             </button>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
           </div>
+
+          {/* Footer */}
           <p className="text-center text-sm text-muted-foreground mt-4">
             Already have an account?{" "}
-            <Link to="/login" className="text-primary font-medium hover:underline">Log in</Link>
+            <Link to="/login" className="text-primary font-medium hover:underline">
+              Log in
+            </Link>
           </p>
+
         </form>
       </div>
     </div>

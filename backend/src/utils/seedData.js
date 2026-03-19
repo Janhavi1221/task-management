@@ -37,7 +37,7 @@ const seedData = async () => {
         status: 'In Progress',
         createdBy: teacher._id,
         comments: [{
-          id: 'c1',
+          id: new mongoose.Types.ObjectId(),
           userId: students[0]._id,
           userName: 'Alice Johnson',
           text: 'Started working on the layout!',
@@ -62,7 +62,7 @@ const seedData = async () => {
         status: 'Completed',
         createdBy: teacher._id,
         comments: [{
-          id: 'c2',
+          id: new mongoose.Types.ObjectId(),
           userId: students[1]._id,
           userName: 'Bob Martinez',
           text: 'Submitted the final version.',
@@ -87,7 +87,7 @@ const seedData = async () => {
         status: 'In Progress',
         createdBy: teacher._id,
         comments: [{
-          id: 'c3',
+          id: new mongoose.Types.ObjectId(),
           userId: students[5]._id,
           userName: 'Frank Chen',
           text: 'Completed 3 out of 5 animations.',

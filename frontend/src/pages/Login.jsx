@@ -7,13 +7,21 @@ export default function Login() {
   const { login } = useApp();
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [role, setRole] = useState("student");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    login(name, role);
-    navigate(role === "teacher" ? "/dashboard" : "/my-tasks");
+    if (!name.trim() || !password.trim()) return;
+    setError("");
+    try {
+      const user = await login(name, password);
+      // Navigate based on user role
+      navigate(user.role === "teacher" ? "/dashboard" : "/my-tasks");
+    } catch (error) {
+      setError(error.message || "Login failed. Please try again.");
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -41,24 +49,21 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-card-foreground mb-1.5">Role</label>
-              <div className="flex gap-3">
-                {["student", "teacher"].map(r => (
-                  <button
-                    key={r}
-                    type="button"
-                    onClick={() => setRole(r)}
-                    className={`flex-1 py-2.5 rounded-lg text-sm font-medium transition-all capitalize ${
-                      role === r
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-secondary"
-                    }`}
-                  >
-                    {r === "teacher" ? "👩‍🏫 Teacher" : "👨‍🎓 Student"}
-                  </button>
-                ))}
-              </div>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+                required
+              />
             </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <button
               type="submit"
               className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2"

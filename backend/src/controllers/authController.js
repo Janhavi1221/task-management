@@ -13,64 +13,140 @@ const generateToken = (id) => {
 // @access  Public
 export const login = async (req, res) => {
   try {
-    const { name, role } = req.body;
+    const { name, password } = req.body;
 
-    if (!name || !role) {
+    console.log('Login attempt:', { name, password: password ? '***' : 'undefined' });
+
+    if (!name || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Please provide name and role'
+        message: 'Please provide name and password'
       });
     }
 
-    // For students, find by name (simplified login)
-    if (role === 'student') {
-      const student = await User.findOne({ name, role: 'student' });
-      if (!student) {
-        return res.status(401).json({
-          success: false,
-          message: 'Student not found'
-        });
-      }
-      
-      const token = generateToken(student._id);
-      
-      return res.status(200).json({
-        success: true,
-        token,
-        user: {
-          id: student._id,
-          name: student.name,
-          email: student.email,
-          role: student.role,
-          avatar: student.avatar
-        }
+    // Find user by name
+    let user = await User.findOne({ name });
+    
+    if (!user) {
+      console.log('User not found:', name);
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials. User not found.'
       });
     }
 
-    // For teachers, find by name (simplified - in production use email/password)
-    if (role === 'teacher') {
-      const teacher = await User.findOne({ role: 'teacher' });
-      if (!teacher) {
-        return res.status(401).json({
-          success: false,
-          message: 'Teacher not found'
-        });
-      }
-      
-      const token = generateToken(teacher._id);
-      
-      return res.status(200).json({
-        success: true,
-        token,
-        user: {
-          id: teacher._id,
-          name: teacher.name,
-          email: teacher.email,
-          role: teacher.role,
-          avatar: teacher.avatar
+    console.log('User found:', user.name, user.role, 'has password:', !!user.password);
+
+    // For students and teachers, check actual password using bcrypt
+    let isValidPassword = false;
+    if (user.role === 'student') {
+      // Students can use either their name as password or their stored password
+      if (user.password) {
+        // Try bcrypt comparison
+        try {
+          isValidPassword = await user.comparePassword(password);
+        } catch (e) {
+          // If bcrypt fails, fall back to simple comparison
+          isValidPassword = password === user.name;
         }
+      } else {
+        // No stored password, use name as password
+        isValidPassword = password === user.name;
+      }
+    } else if (user.role === 'teacher') {
+      // Teachers must use stored password
+      if (user.password) {
+        try {
+          isValidPassword = await user.comparePassword(password);
+        } catch (e) {
+          // If bcrypt fails, fall back to simple comparison
+          isValidPassword = password === 'teacher123';
+        }
+      } else {
+        // No stored password, use default
+        isValidPassword = password === 'teacher123';
+      }
+    }
+
+    console.log('Password validation result:', isValidPassword);
+
+    if (!isValidPassword) {
+      return res.status(401).json({
+        success: false,
+        message: 'Wrong password'
       });
     }
+    
+    console.log('Login successful for:', user.name);
+    
+    const token = generateToken(user._id);
+    
+    return res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Register user
+// @route   POST /api/auth/signup
+// @access  Public
+export const signup = async (req, res) => {
+  try {
+    const { name, email, password, role } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide name, email, password, and role'
+      });
+    }
+
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email already exists'
+      });
+    }
+
+    // Create new user
+    const user = await User.create({
+      name,
+      email,
+      role,
+      password: role === 'teacher' ? password : undefined // Students don't need password in DB
+    });
+    
+    const token = generateToken(user._id);
+    
+    return res.status(201).json({
+      success: true,
+      message: 'Signed up successfully',
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar
+      }
+    });
 
   } catch (error) {
     res.status(500).json({
@@ -86,6 +162,13 @@ export const login = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
     
     res.status(200).json({
       success: true,
