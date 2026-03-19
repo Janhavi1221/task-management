@@ -1,4 +1,4 @@
-const API_BASE_URL = globalThis.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 // Helper function to make API requests
 const apiRequest = async (endpoint, options = {}) => {
@@ -16,8 +16,14 @@ const apiRequest = async (endpoint, options = {}) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
   
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Something went wrong');
+    let errorMessage = 'Something went wrong';
+    try {
+      const error = await response.json();
+      errorMessage = error.message || error.error || `HTTP ${response.status}: ${response.statusText}`;
+    } catch (e) {
+      errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+    }
+    throw new Error(errorMessage);
   }
   
   return response.json();
@@ -25,6 +31,10 @@ const apiRequest = async (endpoint, options = {}) => {
 
 // Auth API
 export const authAPI = {
+  signup: (userData) => apiRequest('/auth/signup', {
+    method: 'POST',
+    body: JSON.stringify(userData),
+  }),
   login: (credentials) => apiRequest('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),

@@ -4,17 +4,26 @@ import { useNavigate, Link } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Signup() {
-  const { login } = useApp();
+  const { signup } = useApp();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    login(name, role);
-    navigate(role === "teacher" ? "/dashboard" : "/my-tasks");
+    if (!name.trim() || !email.trim() || !password.trim()) return;
+    setError("");
+    try {
+      await signup(name, email, password, role);
+      // Show success message and redirect to login
+      setTimeout(() => navigate("/login"), 1500);
+    } catch (error) {
+      setError(error.message || "Signup failed. Please try again.");
+      console.error('Signup failed:', error);
+    }
   };
 
   return (
@@ -41,6 +50,11 @@ export default function Signup() {
                 className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground" required />
             </div>
             <div>
+              <label className="block text-sm font-medium text-card-foreground mb-1.5">Password</label>
+              <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Create a password"
+                className="w-full px-4 py-2.5 rounded-lg bg-muted border border-border text-foreground text-sm outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground" required />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-card-foreground mb-1.5">Role</label>
               <div className="flex gap-3">
                 {["student", "teacher"].map(r => (
@@ -53,6 +67,11 @@ export default function Signup() {
                 ))}
               </div>
             </div>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
             <button type="submit" className="w-full py-2.5 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition-opacity mt-2">
               Create Account
             </button>

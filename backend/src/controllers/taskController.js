@@ -1,4 +1,5 @@
 import Task from '../models/Task.js';
+import mongoose from 'mongoose';
 
 // @desc    Get all tasks
 // @route   GET /api/tasks
@@ -230,7 +231,7 @@ export const addComment = async (req, res) => {
     }
     
     const comment = {
-      id: "c" + Date.now(),
+      id: new mongoose.Types.ObjectId(),
       userId: req.user.id,
       userName: req.user.name,
       text,

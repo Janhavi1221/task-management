@@ -18,6 +18,16 @@ export default function CreateTask() {
     setAssignedTo(prev => prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]);
   };
 
+  const toggleAllStudents = () => {
+    if (assignedTo.length === students.length) {
+      // If all are selected, deselect all
+      setAssignedTo([]);
+    } else {
+      // Select all students
+      setAssignedTo(students.map(s => s.id));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!title || !dueDate || assignedTo.length === 0) {
@@ -50,18 +60,35 @@ export default function CreateTask() {
           </div>
           <div>
             <label className="block text-sm font-medium text-card-foreground mb-1.5">Assign to Students</label>
-            <div className="flex flex-wrap gap-2">
-              {students.map(s => (
-                <button key={s.id} type="button" onClick={() => toggleStudent(s.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all border ${
-                    assignedTo.includes(s.id)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "bg-muted text-muted-foreground border-border hover:border-primary/50"
-                  }`}>
-                  {assignedTo.includes(s.id) && <FiCheck size={14} />}
-                  {s.name}
-                </button>
-              ))}
+            <div className="space-y-3">
+              {/* All Students Button */}
+              <button 
+                type="button" 
+                onClick={toggleAllStudents}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all border ${
+                  assignedTo.length === students.length && students.length > 0
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                }`}
+              >
+                {assignedTo.length === students.length && students.length > 0 && <FiCheck size={14} />}
+                👥 All Students ({assignedTo.length}/{students.length})
+              </button>
+              
+              {/* Individual Student Buttons */}
+              <div className="flex flex-wrap gap-2">
+                {students.map(s => (
+                  <button key={s.id} type="button" onClick={() => toggleStudent(s.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all border ${
+                      assignedTo.includes(s.id)
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-muted text-muted-foreground border-border hover:border-primary/50"
+                    }`}>
+                    {assignedTo.includes(s.id) && <FiCheck size={14} />}
+                    {s.name}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
