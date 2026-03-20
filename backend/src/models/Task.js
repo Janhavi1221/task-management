@@ -38,7 +38,7 @@ const taskSchema = new mongoose.Schema({
     trim: true
   },
   assignedTo: [{
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
   dueDate: {
@@ -57,7 +57,7 @@ const taskSchema = new mongoose.Schema({
   },
   comments: [commentSchema],
   createdBy: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User'
   }

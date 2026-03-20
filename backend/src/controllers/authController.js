@@ -15,8 +15,9 @@ export const login = async (req, res) => {
   try {
     const { name, password } = req.body;
 
-    console.log('Login attempt:', { name, password: password ? '***' : 'undefined' });
-
+    // Debug: Log incoming request
+    console.log('Login request received:', { name, password, headers: req.headers });
+    
     if (!name || !password) {
       return res.status(400).json({
         success: false,
@@ -28,14 +29,11 @@ export const login = async (req, res) => {
     let user = await User.findOne({ name });
     
     if (!user) {
-      console.log('User not found:', name);
       return res.status(401).json({
         success: false,
         message: 'Invalid credentials. User not found.'
       });
     }
-
-    console.log('User found:', user.name, user.role, 'has password:', !!user.password);
 
     // For students and teachers, check actual password using bcrypt
     let isValidPassword = false;
@@ -68,16 +66,12 @@ export const login = async (req, res) => {
       }
     }
 
-    console.log('Password validation result:', isValidPassword);
-
     if (!isValidPassword) {
       return res.status(401).json({
         success: false,
         message: 'Wrong password'
       });
     }
-    
-    console.log('Login successful for:', user.name);
     
     const token = generateToken(user._id);
     

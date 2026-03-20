@@ -42,7 +42,7 @@ export default function TeacherDashboard() {
           <h3 className="font-semibold text-card-foreground mb-4">Recent Activity</h3>
           <div className="space-y-3">
             {recentTasks.map(task => (
-              <div key={task.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+              <div key={task._id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
                 <div className="flex items-center gap-3">
                   <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     task.status === "Completed" ? "status-completed" :

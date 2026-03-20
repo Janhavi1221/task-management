@@ -8,8 +8,15 @@ export default function StudentDetail() {
   const navigate = useNavigate();
   const { students, tasks } = useApp();
 
-  const student = students.find(s => s.id === id);
-  const studentTasks = tasks.filter(t => t.assignedTo.includes(id || ""));
+  const student = students.find(s => (s._id && s._id.toString() === id) || (s.id && s.id.toString() === id));
+  const studentTasks = tasks.filter(t => {
+    // Check if this student is in assignedTo array
+    const isAssignedToStudent = t.assignedTo.some(assignedUser => 
+      (assignedUser._id && assignedUser._id.toString() === id) || 
+      (assignedUser.id && assignedUser.id.toString() === id)
+    );
+    return isAssignedToStudent;
+  });
 
   if (!student) return <DashboardLayout><p className="text-muted-foreground">Student not found.</p></DashboardLayout>;
 
@@ -33,7 +40,7 @@ export default function StudentDetail() {
         <div className="space-y-3">
           {studentTasks.length === 0 && <p className="text-muted-foreground text-sm">No tasks assigned.</p>}
           {studentTasks.map(task => (
-            <div key={task.id} className={`task-card ${task.status === "Completed" ? "border-l-4 border-l-success" : ""}`}>
+            <div key={task._id} className={`task-card ${task.status === "Completed" ? "border-l-4 border-l-success" : ""}`}>
               <div className="flex items-center justify-between mb-2">
                 <h4 className="font-semibold text-card-foreground">{task.title}</h4>
                 <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full ${

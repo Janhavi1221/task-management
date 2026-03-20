@@ -10,11 +10,11 @@ export const getTasks = async (req, res) => {
     
     // If user is student, only get tasks assigned to them
     if (req.user.role === 'student') {
-      query.assignedTo = req.user.id;
+      query.assignedTo = { $in: [req.user._id] }; // Use _id instead of id
     }
     // If user is teacher, get all tasks they created
     else if (req.user.role === 'teacher') {
-      query.createdBy = req.user.id;
+      query.createdBy = req.user._id; // Use _id instead of id
     }
     
     const tasks = await Task.find(query)
@@ -91,7 +91,7 @@ export const createTask = async (req, res) => {
       assignedTo,
       dueDate,
       priority,
-      createdBy: req.user.id
+      createdBy: req.user._id // Use _id instead of id
     });
     
     const populatedTask = await Task.findById(task._id)

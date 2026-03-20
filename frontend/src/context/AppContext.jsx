@@ -11,7 +11,22 @@ export const useApp = () => {
 };
 
 export const AppProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Initialize user from localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Try to get user data from localStorage or parse from token
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        try {
+          return JSON.parse(savedUser);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
   const [students, setStudents] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
@@ -72,6 +87,7 @@ export const AppProvider = ({ children }) => {
       setLoading(true);
       const response = await authAPI.login({ name, password });
       localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user)); // Save user data
       setUser(response.user);
       
       // Show success message
@@ -90,6 +106,7 @@ export const AppProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); // Clear user data
     setUser(null);
     setStudents([]);
     setTasks([]);
@@ -151,10 +168,22 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
+  const deleteStudent = useCallback(async (studentId) => {
+    try {
+      await usersAPI.deleteStudent(studentId);
+      setStudents(prev => prev.filter(s => s._id !== studentId));
+      toast.success('Student deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete student:', error);
+      toast.error(error.message || 'Failed to delete student');
+      throw error;
+    }
+  }, []);
+
   return (
     <AppContext.Provider value={{
       user, signup, login, logout, students, tasks, loading,
-      addTask, updateTask, deleteTask, updateTaskStatus, addComment,
+      addTask, updateTask, deleteTask, updateTaskStatus, addComment, deleteStudent,
       darkMode, toggleDarkMode,
       searchQuery, setSearchQuery, filterStatus, setFilterStatus, filterPriority, setFilterPriority,
       fetchStudents, fetchTasks,

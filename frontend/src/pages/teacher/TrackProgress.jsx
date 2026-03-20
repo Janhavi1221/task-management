@@ -6,10 +6,9 @@ export default function TrackProgress() {
 
   // Flatten: one row per student-task pair
   const rows = tasks.flatMap(task =>
-    task.assignedTo.map(studentId => {
-      const student = students.find(s => s.id === studentId);
+    task.assignedTo.map(student => {
       const completion = task.status === "Completed" ? 100 : task.status === "In Progress" ? 50 : 0;
-      return { taskId: task.id, studentName: student?.name || "Unknown", taskTitle: task.title, status: task.status, completion };
+      return { taskId: task._id, studentName: student?.name || "Unknown", taskTitle: task.title, status: task.status, completion };
     })
   );
 

@@ -9,7 +9,14 @@ export default function StudentDashboard() {
   const [openComments, setOpenComments] = useState(null);
   const [commentText, setCommentText] = useState("");
 
-  const myTasks = tasks.filter(t => t.assignedTo.includes(user?.id || "")).filter(t => {
+  const myTasks = tasks.filter(t => {
+    // Check if current user is in assignedTo array (now populated with objects)
+    const isAssignedToMe = t.assignedTo.some(assignedStudent => 
+      (assignedStudent._id && assignedStudent._id.toString() === user?.id) || 
+      (assignedStudent.id && assignedStudent.id.toString() === user?.id)
+    );
+    
+    if (!isAssignedToMe) return false;
     if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     if (filterStatus !== "All" && t.status !== filterStatus) return false;
     if (filterPriority !== "All" && t.priority !== filterPriority) return false;
@@ -56,7 +63,7 @@ export default function StudentDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {myTasks.map(task => (
-            <div key={task.id} className={`task-card ${task.status === "Completed" ? "border-l-4 border-l-success" : ""}`}>
+            <div key={task._id} className={`task-card ${task.status === "Completed" ? "border-l-4 border-l-success" : ""}`}>
               <div className="flex items-start justify-between mb-2">
                 <h4 className="font-semibold text-card-foreground">{task.title}</h4>
                 <span className={`text-xs font-medium px-2.5 py-0.5 rounded-full shrink-0 ${
@@ -76,25 +83,25 @@ export default function StudentDashboard() {
               {task.status !== "Completed" && (
                 <div className="flex gap-2 mb-3">
                   {task.status !== "In Progress" && (
-                    <button onClick={() => handleStatusChange(task.id, "In Progress")}
+                    <button onClick={() => handleStatusChange(task._id, "In Progress")}
                       className="px-3 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                       Mark In Progress
                     </button>
                   )}
-                  <button onClick={() => handleStatusChange(task.id, "Completed")}
+                  <button onClick={() => handleStatusChange(task._id, "Completed")}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium bg-success/10 text-success hover:bg-success/20 transition-colors">
                     Mark Completed
                   </button>
                 </div>
               )}
 
-              <button onClick={() => setOpenComments(openComments === task.id ? null : task.id)}
+              <button onClick={() => setOpenComments(openComments === task._id ? null : task._id)}
                 className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
                 <FiMessageCircle size={13} />
                 {task.comments.length} comment(s)
               </button>
 
-              {openComments === task.id && (
+              {openComments === task._id && (
                 <div className="mt-3 pt-3 border-t border-border space-y-2">
                   {task.comments.map(c => (
                     <div key={c.id} className="bg-muted rounded-lg p-2.5">
@@ -111,9 +118,9 @@ export default function StudentDashboard() {
                       onChange={e => setCommentText(e.target.value)}
                       placeholder="Add a comment..."
                       className="flex-1 px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
-                      onKeyDown={e => e.key === "Enter" && handleAddComment(task.id)}
+                      onKeyDown={e => e.key === "Enter" && handleAddComment(task._id)}
                     />
-                    <button onClick={() => handleAddComment(task.id)}
+                    <button onClick={() => handleAddComment(task._id)}
                       className="p-2 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity">
                       <FiSend size={14} />
                     </button>

@@ -1,20 +1,37 @@
 import { useApp } from "@/context/AppContext";
 import DashboardLayout from "@/components/DashboardLayout";
 import { useNavigate } from "react-router-dom";
-import { FiChevronRight } from "react-icons/fi";
+import { FiChevronRight, FiTrash2 } from "react-icons/fi";
+import { toast } from "sonner";
 
 export default function StudentsPage() {
-  const { students, tasks } = useApp();
+  const { students, tasks, deleteStudent } = useApp();
   const navigate = useNavigate();
 
   const getStudentStats = (studentId) => {
-    const assigned = tasks.filter(t => t.assignedTo.includes(studentId));
+    const assigned = tasks.filter(t => {
+      // Check if this student is in assignedTo array
+      return t.assignedTo.some(assignedUser => 
+        (assignedUser._id && assignedUser._id.toString() === studentId) || 
+        (assignedUser.id && assignedUser.id.toString() === studentId)
+      );
+    });
     return {
       total: assigned.length,
       completed: assigned.filter(t => t.status === "Completed").length,
       pending: assigned.filter(t => t.status === "Pending").length,
       inProgress: assigned.filter(t => t.status === "In Progress").length,
     };
+  };
+
+  const handleDeleteStudent = async (studentId, studentName) => {
+    if (window.confirm(`Are you sure you want to delete ${studentName}? This action cannot be undone.`)) {
+      try {
+        await deleteStudent(studentId);
+      } catch (error) {
+        // Error is already handled in AppContext
+      }
+    }
   };
 
   return (
@@ -27,12 +44,14 @@ export default function StudentsPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {students.map(student => {
-            const stats = getStudentStats(student.id);
+            // Add null check for student._id
+            const studentId = student._id ? student._id.toString() : student.id;
+            const stats = getStudentStats(studentId);
             const progress = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
             return (
               <button
-                key={student.id}
-                onClick={() => navigate(`/students/${student.id}`)}
+                key={student._id || student.id}
+                onClick={() => navigate(`/students/${studentId}`)}
                 className="task-card text-left w-full group"
               >
                 <div className="flex items-center gap-3 mb-4">
@@ -43,7 +62,19 @@ export default function StudentsPage() {
                     <p className="font-semibold text-card-foreground truncate">{student.name}</p>
                     <p className="text-xs text-muted-foreground">{student.email}</p>
                   </div>
-                  <FiChevronRight className="text-muted-foreground group-hover:text-primary transition-colors" />
+                  <div className="flex items-center gap-2">
+                    <FiChevronRight className="text-muted-foreground group-hover:text-primary transition-colors" />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteStudent(studentId, student.name);
+                      }}
+                      className="p-2 rounded-lg text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete student"
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Progress bar */}

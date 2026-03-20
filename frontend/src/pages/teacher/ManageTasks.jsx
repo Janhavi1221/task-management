@@ -36,8 +36,10 @@ export default function ManageTasks() {
     toast.success("Task deleted.");
   };
 
-  const getStudentNames = (ids) =>
-    ids.map(id => students.find(s => s.id === id)?.name || "Unknown").join(", ");
+  const getStudentNames = (assignedStudents) =>
+    assignedStudents.map(student => 
+      student?.name || "Unknown"
+    ).join(", ");
 
   const selectClass = "px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground outline-none focus:ring-2 focus:ring-ring";
 
@@ -67,8 +69,8 @@ export default function ManageTasks() {
 
         <div className="space-y-3">
           {filtered.map(task => (
-            <div key={task.id} className="task-card">
-              {editingId === task.id ? (
+            <div key={task._id} className="task-card">
+              {editingId === task._id ? (
                 <div className="space-y-3">
                   <input value={editTitle} onChange={e => setEditTitle(e.target.value)}
                     className="w-full px-3 py-2 rounded-lg bg-muted border border-border text-sm text-foreground outline-none focus:ring-2 focus:ring-ring" />
@@ -88,7 +90,7 @@ export default function ManageTasks() {
                     </div>
                     <div className="flex gap-1 shrink-0 ml-4">
                       <button onClick={() => startEdit(task)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"><FiEdit2 size={15} /></button>
-                      <button onClick={() => handleDelete(task.id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"><FiTrash2 size={15} /></button>
+                      <button onClick={() => handleDelete(task._id)} className="p-2 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"><FiTrash2 size={15} /></button>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center gap-2 text-xs">

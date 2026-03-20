@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 // Helper function to make API requests
 const apiRequest = async (endpoint, options = {}) => {
@@ -49,6 +49,9 @@ export const usersAPI = {
   createStudent: (studentData) => apiRequest('/users/students', {
     method: 'POST',
     body: JSON.stringify(studentData),
+  }),
+  deleteStudent: (id) => apiRequest(`/users/students/${id}`, {
+    method: 'DELETE',
   }),
 };
 
